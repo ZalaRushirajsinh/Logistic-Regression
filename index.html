@@ -5,68 +5,154 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logistic Regression</title>
     <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
             color: #333;
-        }
-        h1 {
-            color: #0056b3;
-        }
-        h2 {
-            color: #007bff;
-        }
-        p {
             line-height: 1.6;
+            animation: fadeIn 1s ease-in-out;
         }
-        .input-section {
-            margin-top: 20px;
-            padding: 15px;
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
             background-color: #ffffff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        input[type="text"] {
-            width: 70%;
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+
+        h1 {
+            text-align: center;
+            color: #4a69bd;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            animation: pulse 2s infinite ease-in-out;
         }
-        button {
-            padding: 8px 15px;
-            font-size: 16px;
-            background-color: #007bff;
+
+        h2 {
+            color: #5d81b3;
+            border-bottom: 2px solid #e0e6ed;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            font-size: 1.8rem;
+            position: relative;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #4a69bd;
+            transition: width 0.3s ease-in-out;
+        }
+        
+        h2:hover::after {
+            width: 100%;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        p:hover {
+            transform: translateX(10px);
+            color: #4a69bd;
+        }
+
+        strong {
+            color: #e67e22;
+        }
+
+        .highlight-box {
+            background-color: #f0f8ff;
+            border-left: 5px solid #4a69bd;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .highlight-box:hover {
+            transform: scale(1.01);
+            background-color: #e6f2ff;
+        }
+
+        .button-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .action-button {
+            padding: 12px 25px;
+            font-size: 1rem;
             color: white;
+            background-color: #4a69bd;
             border: none;
-            border-radius: 4px;
+            border-radius: 25px;
             cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 5px 15px rgba(74, 105, 189, 0.4);
         }
-        button:hover {
-            background-color: #0056b3;
+
+        .action-button:hover {
+            background-color: #3b5998;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(74, 105, 189, 0.6);
         }
     </style>
 </head>
 <body>
 
-    <h1>LOGISTIC REGRESSION</h1>
+    <div class="container">
+        <h1>LOGISTIC REGRESSION</h1>
 
-    <h2>What is Logistic Regression?</h2>
-    <p>It is a supervised machine learning algorithm used for classification problems.</p>
-    <p>Logistic Regression predicts the categorical outcome.</p>
-    <p>Like it predicts in a binary outcome, such as yes/no, pass/fail, etc...</p>
+        <div class="highlight-box">
+            <h2>What is Logistic Regression?</h2>
+            <p>It's a powerful <strong>supervised machine learning algorithm</strong> primarily used for classification problems. Unlike linear regression, which predicts a continuous value (like house price), logistic regression predicts the probability of a categorical outcome. This outcome is often **binary**, meaning it has two possible classes, such as "yes" or "no," "pass" or "fail," and "spam" or "not spam."</p>
+            <p>At its core, logistic regression models the relationship between your input features and the probability of a given output. It doesn't give a direct "yes" or "no" answer, but rather a probability score which you can then use to make a decision.</p>
+        </div>
 
-    <h2>Why is it Used?</h2>
-    <p>It is used when we need to solve the classification problem where the outcome is binary.</p>
-    <p><strong>Example:</strong> whether the person will visit the particular website or not?  
-    Is an email spam or not?</p>
-
-    <h2>How is it Helpful in Classification?</h2>
-    <p>Logistic Regression is a classification tool because it determines the probability of an event.</p>
-    <p>The primary way logistic regression helps in classification is by converting a linear equation's output into a probability score using the sigmoid function.  
-    The sigmoid function squashes any real number into a value between 0 and 1. This value represents the probability of an observation belonging to the positive class.</p>
-
+        <div class="highlight-box">
+            <h2>How Does It Work?</h2>
+            <p>The magic of logistic regression lies in its use of the **Sigmoid function**. First, it calculates a linear equation similar to linear regression, which is often represented as $z = \beta_0 + \beta_1x_1 + \beta_2x_2 + \dots$. The result of this equation, $z$, can be any real number from negative infinity to positive infinity.</p>
+            <p>The Sigmoid function, also known as the **logistic function**, takes this value of $z$ and "squashes" it into a probability value between 0 and 1. The formula for the Sigmoid function is:</p>
+            <p class="math-formula" style="text-align: center; font-style: italic; font-size: 1.2rem;">$P(y=1|x) = \frac{1}{1 + e^{-z}}$</p>
+            <p>This output, $P$, represents the probability of the event occurring. For example, a result of 0.85 means there's an 85% chance of the outcome being "yes" or "positive." We then set a **threshold** (commonly 0.5) to classify the result. If the probability is above the threshold, we classify it as one class (e.g., "yes"); otherwise, we classify it as the other class (e.g., "no").</p>
+        </div>
+        
+        <div class="highlight-box">
+            <h2>When Should You Use It?</h2>
+            <p>You should consider using logistic regression when your problem requires a **classification solution** where the dependent variable is **binary** or **dichotomous**. It is also effective for situations with more than two categories (multi-class classification) through extensions like multinomial logistic regression, but its most common application is binary classification.</p>
+            <p>Here are some practical examples of when to use it:</p>
+            <ul>
+                <li><strong>Customer Churn Prediction:</strong> Will a customer cancel their subscription (Yes/No)?</li>
+                <li><strong>Disease Diagnosis:</strong> Based on symptoms, is a patient likely to have a certain disease (Yes/No)?</li>
+                <li><strong>Spam Detection:</strong> Is an email spam or not spam?</li>
+                <li><strong>Credit Card Fraud Detection:</strong> Is a transaction fraudulent or legitimate?</li>
+                <li><strong>Ad Click-Through Rate:</strong> Will a user click on a specific ad (Yes/No)?</li>
+            </ul>
+        </div>
+    </div>
 
 </body>
 </html>
